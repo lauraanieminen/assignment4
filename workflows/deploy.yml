@@ -1,4 +1,4 @@
-name: CI/CD to Azure
+name: CI/CD to Azure (ACR)
 
 on:
   push:
@@ -10,22 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repo
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2. Login to Azure Container Registry (ACR)
       - name: Login to ACR
         run: echo ${{ secrets.ACR_PASSWORD }} | docker login assignment4.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
 
+      # 3. Build Docker image
       - name: Build Docker image
         run: docker build -t assignment4.azurecr.io/myapp:${{ github.sha }} .
 
-      - name: Push image
+      # 4. Push Docker image
+      - name: Push Docker image
         run: docker push assignment4.azurecr.io/myapp:${{ github.sha }}
 
-      - name: Deploy to Web App
+      # 5. Deploy to Azure Web App
+      - name: Deploy to Azure Web App
         run: |
           az webapp config container set \
             --name ourwebapp1235 \
             --resource-group assignment4 \
             --docker-custom-image-name assignment4.azurecr.io/myapp:${{ github.sha }} \
             --docker-registry-server-url https://assignment4.azurecr.io
+
+      # 6. Restart Web App (IMPORTANT FIX)
+      - name: Restart Web App
+        run: az webapp restart --name ourwebapp1235 --resource-group assignment4
