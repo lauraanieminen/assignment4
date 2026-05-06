@@ -12,9 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Login to ACR
-        run: echo ${{ secrets.ACR_PASSWORD }} | docker login assignment4.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
-
       - name: Build image
         run: docker build -t assignment4.azurecr.io/myapp:latest .
 
