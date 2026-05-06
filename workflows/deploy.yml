@@ -1,14 +1,28 @@
-- name: Login to ACR
-  run: echo ${{ secrets.ACR_PASSWORD }} | docker login assignment4.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
+name: CI/CD to Azure
 
-- name: Build image
-  run: docker build -t assignment4.azurecr.io/myapp:latest .
+on:
+  push:
+    branches:
+      - main
 
-- name: Push image
-  run: docker push assignment4.azurecr.io/myapp:latest
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-- name: Deploy to Azure Web App
-  uses: azure/webapps-deploy@v2
-  with:
-    app-name: ourwebapp1235
-    images: assignment4.azurecr.io/myapp:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to ACR
+        run: echo ${{ secrets.ACR_PASSWORD }} | docker login assignment4.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
+
+      - name: Build image
+        run: docker build -t assignment4.azurecr.io/myapp:latest .
+
+      - name: Push image
+        run: docker push assignment4.azurecr.io/myapp:latest
+
+      - name: Deploy
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ourwebapp1235
+          images: assignment4.azurecr.io/myapp:latest
