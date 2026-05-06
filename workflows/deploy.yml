@@ -10,11 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Login to ACR
-        run: echo ${{ secrets.ACR_PASSWORD }} | docker login assignment4.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
+      - uses: actions/checkout@v4
 
       - name: Build image
         run: docker build -t assignment4.azurecr.io/myapp:latest .
@@ -22,7 +18,7 @@ jobs:
       - name: Push image
         run: docker push assignment4.azurecr.io/myapp:latest
 
-      - name: Deploy to Azure Web App
+      - name: Deploy
         uses: azure/webapps-deploy@v2
         with:
           app-name: ourwebapp1235
