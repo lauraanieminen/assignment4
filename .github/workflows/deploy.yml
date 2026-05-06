@@ -1,0 +1,31 @@
+name: CI/CD to Azure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Azure Container Registry
+        run: echo ${{ secrets.ACR_PASSWORD }} | docker login assignment4.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t assignment4.azurecr.io/myapp:${{ github.sha }} .
+
+      - name: Push Docker image
+        run: docker push assignment4.azurecr.io/myapp:${{ github.sha }}
+
+      - name: Deploy to Azure Web App
+        run: |
+          az webapp config container set \
+            --name ourwebapp1235 \
+            --resource-group assignment4 \
+            --docker-custom-image-name assignment4.azurecr.io/myapp:${{ github.sha }} \
+            --docker-registry-server-url https://assignment4.azurecr.io
