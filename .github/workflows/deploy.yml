@@ -25,8 +25,11 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Deploy
         uses: azure/webapps-deploy@v2
         with:
           app-name: ourwebapp1235
           images: assignment4.azurecr.io/myapp:latest
+
+          #hello
