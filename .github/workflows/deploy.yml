@@ -21,6 +21,10 @@ jobs:
       - name: Push image
         run: docker push assignment4.azurecr.io/myapp:latest
 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.ACR_USERNAME }} ${{ secrets.ACR_PASSWORD }}
       - name: Deploy
         uses: azure/webapps-deploy@v2
         with:
