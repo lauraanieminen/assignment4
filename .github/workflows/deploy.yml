@@ -26,5 +26,3 @@ jobs:
         with:
           app-name: ourwebapp1235
           images: assignment4.azurecr.io/myapp:latest
-
-#hello world
